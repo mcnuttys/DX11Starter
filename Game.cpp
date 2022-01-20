@@ -197,6 +197,15 @@ void Game::CreateBasicGeometry()
 
 	unsigned int thingIndices[] = { 0, 1, 2, 0, 2, 3 };
 
+	for (int i = 0; i < 8; i++)
+	{
+		float a = (i / 7.0f) * 2.0f * 3.14f;
+		float x = cos(a);
+		float y = sin(a);
+
+		std::cout << x << ',' << y << std::endl;
+	}
+
 	thing = std::make_shared<Mesh>(thingVertices, 4, thingIndices, 6, device, context);
 }
 
