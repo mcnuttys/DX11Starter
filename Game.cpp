@@ -186,27 +186,31 @@ void Game::CreateBasicGeometry()
 	unsigned int sqrIndices[] = { 0, 2, 3, 0, 1, 2 };
 
 	square = std::make_shared<Mesh>(sqrVertices, 4, sqrIndices, 6, device, context);
-	
-	Vertex thingVertices[] =
-	{
-		{ XMFLOAT3(-0.25f, +0.8f, +0.0f), red },
-		{ XMFLOAT3(+0.1f, +0.5f, +0.0f), green },
-		{ XMFLOAT3(+0.75f, -0.1f, +0.0f), blue },
-		{ XMFLOAT3(-0.6f, -0.52f, +0.0f), red }
-	};
 
-	unsigned int thingIndices[] = { 0, 1, 2, 0, 2, 3 };
-
-	for (int i = 0; i < 8; i++)
+	const int res = 32;
+	Vertex thingVertices[res + 1];
+	thingVertices[0] = { XMFLOAT3(+0.0f, +0.0f, +0.0f), red };
+	for (int i = 0; i < res; i++)
 	{
-		float a = (i / 7.0f) * 2.0f * 3.14f;
-		float x = cos(a);
-		float y = sin(a);
+		float a = (i / ((float)res - 1)) * 2.0f * 3.14f;
+		float x = cos(-a) * 0.5;
+		float y = sin(-a) * 0.5;
 
 		std::cout << x << ',' << y << std::endl;
+		thingVertices[i + 1] = { XMFLOAT3(x, y, +0.0f), blue };
 	}
 
-	thing = std::make_shared<Mesh>(thingVertices, 4, thingIndices, 6, device, context);
+	unsigned int thingIndices[(res + 1) * 3];
+
+	for (int i = 1; i < res + 2; i++)
+	{
+		int ii = (i - 1) * 3;
+		thingIndices[ii] = 0;
+		thingIndices[ii + 1] = i;
+		thingIndices[ii + 2] = i + 1;
+	}
+
+	thing = std::make_shared<Mesh>(thingVertices, res + 1, thingIndices, (res + 1) * 3, device, context);
 }
 
 
@@ -264,10 +268,9 @@ void Game::Draw(float deltaTime, float totalTime)
 	// - However, this isn't always the case (but might be for this course)
 	context->IASetInputLayout(inputLayout.Get());
 
-
+	thing->Draw();
 	triangle->Draw();
 	square->Draw();
-	thing->Draw();
 
 	// Present the back buffer to the user
 	//  - Puts the final frame we're drawing into the window so the user can see it
