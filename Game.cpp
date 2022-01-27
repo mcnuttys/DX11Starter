@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Vertex.h"
 #include "Input.h"
+#include "BufferStructs.h"
 
 #include <math.h>
 #include <iostream>
@@ -66,6 +67,17 @@ void Game::Init()
 	// geometric primitives (points, lines or triangles) we want to draw.  
 	// Essentially: "What kind of shape should the GPU draw with our data?"
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	unsigned int size = sizeof(VertexShaderExternalData);
+	size = (size + 15) / 16 * 16;
+
+	D3D11_BUFFER_DESC cbDesc =  {};
+	cbDesc.BindFlags =			D3D11_BIND_CONSTANT_BUFFER;
+	cbDesc.ByteWidth =			size;
+	cbDesc.CPUAccessFlags =		D3D11_CPU_ACCESS_WRITE;
+	cbDesc.Usage =				D3D11_USAGE_DYNAMIC;
+
+	device->CreateBuffer(&cbDesc, 0, vsConstantBuffer.GetAddressOf());
 }
 
 // --------------------------------------------------------
@@ -196,7 +208,6 @@ void Game::CreateBasicGeometry()
 		float x = cos(-a) * 0.5;
 		float y = sin(-a) * 0.5;
 
-		std::cout << x << ',' << y << std::endl;
 		thingVertices[i + 1] = { XMFLOAT3(x, y, +0.0f), blue };
 	}
 
@@ -267,6 +278,21 @@ void Game::Draw(float deltaTime, float totalTime)
 	//    this could simply be done once in Init()
 	// - However, this isn't always the case (but might be for this course)
 	context->IASetInputLayout(inputLayout.Get());
+
+
+	VertexShaderExternalData vsData;
+	vsData.colorTint = XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f);
+	vsData.offset = XMFLOAT3(0.25f, 0.0f, 0.0f);
+
+	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};
+	context->Map(vsConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);
+	memcpy(mappedBuffer.pData, &vsData, sizeof(vsData));
+	context->Unmap(vsConstantBuffer.Get(), 0);
+
+	context->VSSetConstantBuffers(
+		0,
+		1,
+		vsConstantBuffer.GetAddressOf());
 
 	thing->Draw();
 	triangle->Draw();
