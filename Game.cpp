@@ -2,6 +2,7 @@
 #include "Vertex.h"
 #include "Input.h"
 #include "BufferStructs.h"
+#include "GameEntity.h"
 
 #include <math.h>
 #include <iostream>
@@ -48,7 +49,8 @@ Game::~Game()
 	// we don't need to explicitly clean up those DirectX objects
 	// - If we weren't using smart pointers, we'd need
 	//   to call Release() on each DirectX object created in Game
-
+	for (auto& m : meshes) { delete m; }
+	for (auto& e : entities) { delete e; }
 }
 
 // --------------------------------------------------------
@@ -185,7 +187,7 @@ void Game::CreateBasicGeometry()
 
 	unsigned int triIndices[] = { 0, 1, 2 };
 
-	triangle = std::make_shared<Mesh>(triVertices, 3, triIndices, 3, device, context);
+	Mesh* triangle = new Mesh(triVertices, 3, triIndices, 3, device, context);
 
 	Vertex sqrVertices[] =
 	{
@@ -197,7 +199,7 @@ void Game::CreateBasicGeometry()
 
 	unsigned int sqrIndices[] = { 0, 2, 3, 0, 1, 2 };
 
-	square = std::make_shared<Mesh>(sqrVertices, 4, sqrIndices, 6, device, context);
+	Mesh* square = new Mesh(sqrVertices, 4, sqrIndices, 6, device, context);
 
 	const int res = 32;
 	Vertex thingVertices[res + 1];
@@ -221,7 +223,30 @@ void Game::CreateBasicGeometry()
 		thingIndices[ii + 2] = i + 1;
 	}
 
-	thing = std::make_shared<Mesh>(thingVertices, res + 1, thingIndices, (res + 1) * 3, device, context);
+	Mesh* thing = new Mesh(thingVertices, res + 1, thingIndices, (res + 1) * 3, device, context);
+
+	meshes.push_back(triangle);
+	meshes.push_back(square);
+	meshes.push_back(thing);
+
+	GameEntity* triangle0 = new GameEntity(triangle);
+	GameEntity* square0 = new GameEntity(square);
+	GameEntity* thing0 = new GameEntity(thing);
+	GameEntity* triangle1 = new GameEntity(triangle);
+	GameEntity* square1 = new GameEntity(square);
+
+	triangle0->GetTransform()->MoveAbsolute(1.0f, 0.0f, 0.0f);
+	square0->GetTransform()->Rotate(0.0f, 0.0f, 0.707f);
+	thing0->GetTransform()->MoveAbsolute(0.0f,-0.5f, 0.0f);
+	triangle1->GetTransform()->Scale(0.25f, 0.25f, 1.0f);
+	triangle1->GetTransform()->MoveAbsolute(0.0f, 0.75f, 0.0f);
+	square1->GetTransform()->MoveAbsolute(-1.0f, 0.0f, 0.0f);
+
+	entities.push_back(triangle0);
+	entities.push_back(square0);
+	entities.push_back(thing0);
+	entities.push_back(triangle1);
+	entities.push_back(square1);
 }
 
 
@@ -243,6 +268,16 @@ void Game::Update(float deltaTime, float totalTime)
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
+
+	float offsetX = sin(totalTime) * deltaTime;
+	float offsetY = cos(totalTime) * deltaTime;
+
+	for (auto& e : entities)
+	{
+		e->GetTransform()->SetScale(sin(totalTime), cos(totalTime), 1.0f);
+		e->GetTransform()->Rotate(0, 0, offsetY * 10);
+		e->GetTransform()->MoveAbsolute(offsetX, offsetY, 0);
+	}
 }
 
 // --------------------------------------------------------
@@ -271,7 +306,6 @@ void Game::Draw(float deltaTime, float totalTime)
 	context->VSSetShader(vertexShader.Get(), 0, 0);
 	context->PSSetShader(pixelShader.Get(), 0, 0);
 
-
 	// Ensure the pipeline knows how to interpret the data (numbers)
 	// from the vertex buffer.  
 	// - If all of your 3D models use the exact same vertex layout,
@@ -280,23 +314,15 @@ void Game::Draw(float deltaTime, float totalTime)
 	context->IASetInputLayout(inputLayout.Get());
 
 
-	VertexShaderExternalData vsData;
-	vsData.colorTint = XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f);
-	vsData.offset = XMFLOAT3(0.25f, 0.0f, 0.0f);
-
-	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};
-	context->Map(vsConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);
-	memcpy(mappedBuffer.pData, &vsData, sizeof(vsData));
-	context->Unmap(vsConstantBuffer.Get(), 0);
-
 	context->VSSetConstantBuffers(
 		0,
 		1,
 		vsConstantBuffer.GetAddressOf());
 
-	thing->Draw();
-	triangle->Draw();
-	square->Draw();
+	for (auto& e : entities)
+	{
+		e->Draw(context, vsConstantBuffer);
+	}
 
 	// Present the back buffer to the user
 	//  - Puts the final frame we're drawing into the window so the user can see it
