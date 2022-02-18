@@ -1,5 +1,6 @@
 #pragma once
 #include "Mesh.h"
+#include "Camera.h"
 #include "GameEntity.h"
 #include "DXCore.h"
 
@@ -44,6 +45,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
+	std::shared_ptr<Camera> mainCamera;
 	std::vector<Mesh*> meshes;
 	std::vector<GameEntity*> entities;
 

@@ -36,6 +36,8 @@ Game::Game(HINSTANCE hInstance)
 	CreateConsoleWindow(500, 120, 32, 120);
 	printf("Console window created successfully.  Feel free to printf() here.\n");
 #endif
+
+	mainCamera = 0;
 }
 
 // --------------------------------------------------------
@@ -80,6 +82,8 @@ void Game::Init()
 	cbDesc.Usage =				D3D11_USAGE_DYNAMIC;
 
 	device->CreateBuffer(&cbDesc, 0, vsConstantBuffer.GetAddressOf());
+
+	mainCamera = std::make_shared<Camera>((float)width / height, DirectX::XMFLOAT3(0.0f, 0.0f, -10.0f));
 }
 
 // --------------------------------------------------------
@@ -258,6 +262,10 @@ void Game::OnResize()
 {
 	// Handle base-level DX resize stuff
 	DXCore::OnResize();
+
+	if (mainCamera) {
+		mainCamera->UpdateProjectionMatrix((float)this->width / this->height);
+	}
 }
 
 // --------------------------------------------------------
@@ -274,10 +282,12 @@ void Game::Update(float deltaTime, float totalTime)
 
 	for (auto& e : entities)
 	{
-		e->GetTransform()->SetScale(sin(totalTime), cos(totalTime), 1.0f);
+		//e->GetTransform()->SetScale(sin(totalTime), cos(totalTime), 1.0f);
 		e->GetTransform()->Rotate(0, 0, offsetY * 10);
-		e->GetTransform()->MoveAbsolute(offsetX, offsetY, 0);
+		e->GetTransform()->MoveAbsolute(offsetX / 5, offsetY / 5, 0);
 	}
+
+	mainCamera->Update(deltaTime);
 }
 
 // --------------------------------------------------------
@@ -321,7 +331,7 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	for (auto& e : entities)
 	{
-		e->Draw(context, vsConstantBuffer);
+		e->Draw(context, vsConstantBuffer, mainCamera);
 	}
 
 	// Present the back buffer to the user
