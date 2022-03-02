@@ -1,32 +1,53 @@
 #include "GameEntity.h"
 #include "Camera.h"
-#include "BufferStructs.h"
-
+#include <math.h>
 #include <memory>
 
 using namespace DirectX;
 
-GameEntity::GameEntity(Mesh* _mesh)
+GameEntity::GameEntity(Mesh* _mesh, std::shared_ptr<Material> material)
 {
     mesh = _mesh;
+
+	SetMaterial(material);
 }
 
 Transform* GameEntity::GetTransform() { return &transform; }
 
 Mesh* GameEntity::GetMesh() { return mesh; }
 
-void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, Microsoft::WRL::ComPtr<ID3D11Buffer> vsConstantBuffer, std::shared_ptr<Camera> camera)
+void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::shared_ptr<Camera> camera, float totalTime)
 {
-	VertexShaderExternalData vsData;
-	vsData.worldMatrix = transform.GetWorldMatrix();
-	vsData.viewMatrix = camera->GetViewMatrix();
-	vsData.projectionMatrix = camera->GetProjectionMatrix();
+	material->GetPixelShader()->SetShader();
 
-	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};
-	context->Map(vsConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);
+	std::shared_ptr<SimpleVertexShader> vs = material->GetVertexShader();
+	vs->SetShader();
 
-	memcpy(mappedBuffer.pData, &vsData, sizeof(vsData));
-	context->Unmap(vsConstantBuffer.Get(), 0);
+	vs->SetMatrix4x4("world", transform.GetWorldMatrix());
+	vs->SetMatrix4x4("view", camera->GetViewMatrix());
+	vs->SetMatrix4x4("projection", camera->GetProjectionMatrix());
+
+	vs->CopyAllBufferData();
+
+	std::shared_ptr<SimplePixelShader> ps = material->GetPixelShader();
+	ps->SetShader();
+	ps->SetFloat4("colorTint", material->GetColorTint());
+	ps->SetFloat("time", totalTime);
+	ps->SetFloat2("circle0", XMFLOAT2(sin(totalTime), cos(totalTime)));
+	ps->SetFloat2("circle1", XMFLOAT2(sin(-totalTime * 5), cos(totalTime * 5)));
+	ps->SetFloat2("circle2", XMFLOAT2(sin(totalTime * 0.25), cos(-totalTime * 0.25)));
+
+	ps->CopyAllBufferData();
 
 	mesh->Draw();
+}
+
+std::shared_ptr<Material> GameEntity::GetMaterial()
+{
+	return material;
+}
+
+void GameEntity::SetMaterial(std::shared_ptr<Material> _material)
+{
+	material = _material;
 }

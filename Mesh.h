@@ -1,7 +1,6 @@
 #pragma once
 
 #include "DXCore.h"
-#include <DirectXMath.h>
 #include <wrl/client.h> // Used for ComPtr - a smart pointer for COM objects
 #include "Vertex.h"
 
@@ -16,7 +15,10 @@ public:
 		Microsoft::WRL::ComPtr<ID3D11Device> _device,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> _deviceContext
 	);
-	~Mesh();
+	Mesh(
+		const char* objFile,
+		Microsoft::WRL::ComPtr<ID3D11Device> _device,
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> _deviceContext);
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetVertexBuffer();
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetIndexBuffer();
@@ -24,6 +26,8 @@ public:
 	void Draw();
 
 private:
+	void CreateBuffers(Vertex* vertices, int numVerts, unsigned int* indices, int numIndices, Microsoft::WRL::ComPtr<ID3D11Device> device);
+
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
 

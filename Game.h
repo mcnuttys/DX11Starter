@@ -3,6 +3,8 @@
 #include "Camera.h"
 #include "GameEntity.h"
 #include "DXCore.h"
+#include "SimpleShader.h"
+#include "Material.h"
 
 #include <vector>
 #include <DirectXMath.h>
@@ -37,17 +39,21 @@ private:
 	//  - This is a smart pointer for objects that abide by the
 	//    Component Object Model, which DirectX objects do
 	//  - More info here: https://github.com/Microsoft/DirectXTK/wiki/ComPtr
-	
-	Microsoft::WRL::ComPtr<ID3D11Buffer> vsConstantBuffer;
-	
+		
 	// Shaders and shader-related constructs
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
+
+	std::shared_ptr<SimpleVertexShader> vertexShader;
+	std::shared_ptr<SimplePixelShader> pixelShader;
+	std::shared_ptr<SimplePixelShader> fancyPixelShader;
 
 	std::shared_ptr<Camera> mainCamera;
 	std::vector<Mesh*> meshes;
 	std::vector<GameEntity*> entities;
 
+	std::shared_ptr<Material> mat1;
+	std::shared_ptr<Material> mat2;
+	std::shared_ptr<Material> mat3;
+	std::shared_ptr<Material> matFancy;
 };
 
