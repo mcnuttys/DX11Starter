@@ -1,3 +1,4 @@
+#include "ShaderIncludes.hlsli"
 
 cbuffer ExternalData : register(b0)
 {
@@ -7,13 +8,6 @@ cbuffer ExternalData : register(b0)
 	float2 circle1;
 	float2 circle2;
 }
-
-struct VertexToPixel
-{
-	float4 screenPosition	: SV_POSITION;
-	float2 uv				: TEXCOORD;
-	float3 normal			: NORMAL;
-};
 
 float4 main(VertexToPixel input) : SV_TARGET
 {

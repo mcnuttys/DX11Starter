@@ -14,53 +14,22 @@ Mesh::Mesh(
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> _deviceContext
 )
 {
-	Vertex* vertices = _vertices;
-	unsigned int* indices = _indices;
-	indexCount = _indexCount;
-
-	D3D11_BUFFER_DESC vbd = {};
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(Vertex) * _vertexCount;
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = 0;
-	vbd.MiscFlags = 0;
-	vbd.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA initialVertexData = {};
-	initialVertexData.pSysMem = vertices;
-
-	_device->CreateBuffer(&vbd, &initialVertexData, vertexBuffer.GetAddressOf());
-
-	D3D11_BUFFER_DESC ibd = {};
-	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(unsigned int) * _indexCount;
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = 0;
-	ibd.MiscFlags = 0;
-	ibd.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA initialIndexData = {};
-	initialIndexData.pSysMem = indices;
-	_device->CreateBuffer(&ibd, &initialIndexData, indexBuffer.GetAddressOf());
-
-	context = _deviceContext;
-
-	//CreateBuffers(_vertices, _vertexCount, _indices, _indexCount, _device);
+	CreateBuffers(_vertices, _vertexCount, _indices, _indexCount, _device);
 }
 
 Mesh::Mesh(const char* objFile, Microsoft::WRL::ComPtr<ID3D11Device> _device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> _deviceContext)
 {
 	// Author: Chris Cascioli
-	// Purpose: Basic .OBJ 3D model loading, supporting positions, uvs and normals
-	// 
-	// - You are allowed to directly copy/paste this into your code base
-	//   for assignments, given that you clearly cite that this is not
-	//   code of your own design.
-	//
-	// - NOTE: You'll need to #include <fstream>
-	
-	
-	// File input object
+// Purpose: Basic .OBJ 3D model loading, supporting positions, uvs and normals
+// 
+// - You are allowed to directly copy/paste this into your code base
+//   for assignments, given that you clearly cite that this is not
+//   code of your own design.
+//
+// - NOTE: You'll need to #include <fstream>
+
+
+// File input object
 	std::ifstream obj(objFile);
 
 	// Check for successful open

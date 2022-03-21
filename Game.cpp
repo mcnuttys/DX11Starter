@@ -65,10 +65,10 @@ void Game::Init()
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
 
-	mat1 = std::make_shared<Material>(XMFLOAT4(1, 0, 0, 1), vertexShader, pixelShader);
-	mat2 = std::make_shared<Material>(XMFLOAT4(0, 1, 0, 1), vertexShader, pixelShader);
-	mat3 = std::make_shared<Material>(XMFLOAT4(0, 0, 1, 1), vertexShader, pixelShader);
-	matFancy = std::make_shared<Material>(XMFLOAT4(0, 0, 1, 1), vertexShader, fancyPixelShader);
+	mat1 = std::make_shared<Material>(XMFLOAT3(0.25, 0.25, 0.25), 0.75f, vertexShader, pixelShader);
+	mat2 = std::make_shared<Material>(XMFLOAT3(0.5, 0.5, 0.5), 0.5f, vertexShader, pixelShader);
+	mat3 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.25f, vertexShader, pixelShader);
+	matFancy = std::make_shared<Material>(XMFLOAT3(0, 0, 1), 1.0f, vertexShader, fancyPixelShader);
 
 	CreateBasicGeometry();
 	
@@ -78,6 +78,7 @@ void Game::Init()
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mainCamera = std::make_shared<Camera>((float)width / height, DirectX::XMFLOAT3(0.0f, 0.0f, -10.0f));
+	ambientColor = XMFLOAT3(0.1f, 0.1f, 0.25f);
 }
 
 // --------------------------------------------------------
@@ -132,7 +133,7 @@ void Game::CreateBasicGeometry()
 	GameEntity* entity2 = new GameEntity(meshes[2], mat3);
 	GameEntity* entity3 = new GameEntity(meshes[3], mat1);
 	GameEntity* entity4 = new GameEntity(meshes[4], mat2);
-	GameEntity* entity5 = new GameEntity(meshes[5], matFancy);
+	GameEntity* entity5 = new GameEntity(meshes[5], mat3);
 	GameEntity* entity6 = new GameEntity(meshes[6], mat1);
 
 	entities.push_back(entity0);
@@ -143,11 +144,48 @@ void Game::CreateBasicGeometry()
 	entities.push_back(entity5);
 	entities.push_back(entity6);
 
-
 	for (int i = -4; i < 3; i++) {
 		int j = i + 4;
 		entities[j]->GetTransform()->SetPosition(i * 3, 0, 0);
 	}
+
+	Light dirLight0 = {};
+	dirLight0.Color = XMFLOAT3(1, 0, 0);
+	dirLight0.Type = LIGHT_TYPE_DIRECTIONAL;
+	dirLight0.Intensity = 1.0f;
+	dirLight0.Direction = XMFLOAT3(1, 0, 0);
+
+	Light dirLight1 = {};
+	dirLight1.Color = XMFLOAT3(0, 1, 0);
+	dirLight1.Type = LIGHT_TYPE_DIRECTIONAL;
+	dirLight1.Intensity = 1.0f;
+	dirLight1.Direction = XMFLOAT3(0, 1, 0);
+
+	Light dirLight2 = {};
+	dirLight2.Color = XMFLOAT3(0, 0, 1);
+	dirLight2.Type = LIGHT_TYPE_DIRECTIONAL;
+	dirLight2.Intensity = 1.0f;
+	dirLight2.Direction = XMFLOAT3(0, 0, 1);
+
+	Light pointLight0 = {};
+	pointLight0.Color = XMFLOAT3(1, 1, 1);
+	pointLight0.Type = LIGHT_TYPE_POINT;
+	pointLight0.Intensity = 0.5f;
+	pointLight0.Position = XMFLOAT3(-1.5f, 0, 0);
+	pointLight0.Range = 5;
+
+	Light pointLight1 = {};
+	pointLight1.Color = XMFLOAT3(1, 1, 0);
+	pointLight1.Type = LIGHT_TYPE_POINT;
+	pointLight1.Intensity = 1.0f;
+	pointLight1.Position = XMFLOAT3(1.5f, 1, 0);
+	pointLight1.Range = 10;
+
+	lights.push_back(dirLight0);
+	lights.push_back(dirLight1);
+	lights.push_back(dirLight2);
+	lights.push_back(pointLight0);
+	lights.push_back(pointLight1);
 }
 
 
@@ -213,6 +251,10 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	for (auto& e : entities)
 	{
+		std::shared_ptr<SimplePixelShader> ps = e->GetMaterial()->GetPixelShader();
+
+		ps->SetFloat3("ambient", ambientColor);
+		ps->SetData("lights", &lights[0], sizeof(Light) * (int)lights.size());
 		e->Draw(context, mainCamera, totalTime);
 	}
 

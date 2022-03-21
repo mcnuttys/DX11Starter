@@ -5,6 +5,7 @@
 #include "DXCore.h"
 #include "SimpleShader.h"
 #include "Material.h"
+#include "Lights.h"
 
 #include <vector>
 #include <DirectXMath.h>
@@ -55,5 +56,9 @@ private:
 	std::shared_ptr<Material> mat2;
 	std::shared_ptr<Material> mat3;
 	std::shared_ptr<Material> matFancy;
+
+	DirectX::XMFLOAT3 ambientColor;
+
+	std::vector<Light> lights;
 };
 
