@@ -5,6 +5,7 @@
 
 #include <math.h>
 #include <iostream>
+#include "WICTextureLoader.h"
 
 // Needed for a helper function to read compiled shader files from the hard drive
 #pragma comment(lib, "d3dcompiler.lib")
@@ -60,15 +61,38 @@ Game::~Game()
 // --------------------------------------------------------
 void Game::Init()
 {
+	// Load Textures
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/Textures/river_small_rocks_diff_1k.png").c_str(), 0, rockyTexture.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/Textures/weathered_brown_planks_diff_1k.png").c_str(), 0, woodPlanksTexture.GetAddressOf());
+
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
+	D3D11_SAMPLER_DESC sampDescription = {};
+	sampDescription.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDescription.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDescription.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDescription.Filter = D3D11_FILTER_ANISOTROPIC;
+	sampDescription.MaxAnisotropy = 16;
+	sampDescription.MaxLOD = D3D11_FLOAT32_MAX;
+	device->CreateSamplerState(&sampDescription, sampler.GetAddressOf());
+
 	// Helper methods for loading shaders, creating some basic
 	// geometry to draw and some simple camera matrices.
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
 
-	mat1 = std::make_shared<Material>(XMFLOAT3(0.25, 0.25, 0.25), 0.75f, vertexShader, pixelShader);
-	mat2 = std::make_shared<Material>(XMFLOAT3(0.5, 0.5, 0.5), 0.5f, vertexShader, pixelShader);
-	mat3 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.25f, vertexShader, pixelShader);
-	matFancy = std::make_shared<Material>(XMFLOAT3(0, 0, 1), 1.0f, vertexShader, fancyPixelShader);
+	mat1 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.75f, XMFLOAT2(0.1f, 0.25f), XMFLOAT2(5.0f, 1.0f), vertexShader, pixelShader);
+	mat2 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.5f, XMFLOAT2(0.1f, 0.25f), XMFLOAT2(5.0f, 1.0f), vertexShader, pixelShader);
+	mat3 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.25f, XMFLOAT2(0.1f, 0.25f), XMFLOAT2(5.0f, 1.0f), vertexShader, pixelShader);
+	matFancy = std::make_shared<Material>(XMFLOAT3(0, 0, 1), 1.0f, XMFLOAT2(1, 1), XMFLOAT2(1, 1), vertexShader, fancyPixelShader);
+
+	mat1->AddTextureSRV("SurfaceTexture", rockyTexture);
+	mat1->AddSampler("BasicSampler", sampler);
+
+	mat2->AddTextureSRV("SurfaceTexture", woodPlanksTexture);
+	mat2->AddSampler("BasicSampler", sampler);
+
+	mat3->AddTextureSRV("SurfaceTexture", rockyTexture);
+	mat3->AddSampler("BasicSampler", sampler);
 
 	CreateBasicGeometry();
 	
@@ -78,7 +102,7 @@ void Game::Init()
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mainCamera = std::make_shared<Camera>((float)width / height, DirectX::XMFLOAT3(0.0f, 0.0f, -10.0f));
-	ambientColor = XMFLOAT3(0.1f, 0.1f, 0.25f);
+	ambientColor = XMFLOAT3(0.25f, 0.25f, 0.25f);
 }
 
 // --------------------------------------------------------
@@ -103,11 +127,6 @@ void Game::LoadShaders()
 // --------------------------------------------------------
 void Game::CreateBasicGeometry()
 {
-	XMFLOAT4 red = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	XMFLOAT4 green = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	XMFLOAT4 blue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-
-	
 	Vertex triVertices[] =
 	{
 		{ XMFLOAT3(+0.0f, +0.5f, +0.0f) },
@@ -150,28 +169,28 @@ void Game::CreateBasicGeometry()
 	}
 
 	Light dirLight0 = {};
-	dirLight0.Color = XMFLOAT3(1, 0, 0);
+	dirLight0.Color = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	dirLight0.Type = LIGHT_TYPE_DIRECTIONAL;
-	dirLight0.Intensity = 1.0f;
-	dirLight0.Direction = XMFLOAT3(1, 0, 0);
+	dirLight0.Intensity = 0.5f;
+	dirLight0.Direction = XMFLOAT3(1, -1, 0);
 
-	Light dirLight1 = {};
-	dirLight1.Color = XMFLOAT3(0, 1, 0);
-	dirLight1.Type = LIGHT_TYPE_DIRECTIONAL;
-	dirLight1.Intensity = 1.0f;
-	dirLight1.Direction = XMFLOAT3(0, 1, 0);
-
-	Light dirLight2 = {};
-	dirLight2.Color = XMFLOAT3(0, 0, 1);
-	dirLight2.Type = LIGHT_TYPE_DIRECTIONAL;
-	dirLight2.Intensity = 1.0f;
-	dirLight2.Direction = XMFLOAT3(0, 0, 1);
+	//Light dirLight1 = {};
+	//dirLight1.Color = XMFLOAT3(1, 1, 1);
+	//dirLight1.Type = LIGHT_TYPE_DIRECTIONAL;
+	//dirLight1.Intensity = 0.5f;
+	//dirLight1.Direction = XMFLOAT3(0, 1, 0);
+	//
+	//Light dirLight2 = {};
+	//dirLight2.Color = XMFLOAT3(1, 1, 1);
+	//dirLight2.Type = LIGHT_TYPE_DIRECTIONAL;
+	//dirLight2.Intensity = 0.5f;
+	//dirLight2.Direction = XMFLOAT3(0, 0, 1);
 
 	Light pointLight0 = {};
-	pointLight0.Color = XMFLOAT3(1, 1, 1);
+	pointLight0.Color = XMFLOAT3(1, 0, 0);
 	pointLight0.Type = LIGHT_TYPE_POINT;
-	pointLight0.Intensity = 0.5f;
-	pointLight0.Position = XMFLOAT3(-1.5f, 0, 0);
+	pointLight0.Intensity = 1.0f;
+	pointLight0.Position = XMFLOAT3(-4, 1, 0);
 	pointLight0.Range = 5;
 
 	Light pointLight1 = {};
@@ -179,11 +198,11 @@ void Game::CreateBasicGeometry()
 	pointLight1.Type = LIGHT_TYPE_POINT;
 	pointLight1.Intensity = 1.0f;
 	pointLight1.Position = XMFLOAT3(1.5f, 1, 0);
-	pointLight1.Range = 10;
+	pointLight1.Range = 2;
 
 	lights.push_back(dirLight0);
-	lights.push_back(dirLight1);
-	lights.push_back(dirLight2);
+	//lights.push_back(dirLight1);
+	//lights.push_back(dirLight2);
 	lights.push_back(pointLight0);
 	lights.push_back(pointLight1);
 }
@@ -255,6 +274,7 @@ void Game::Draw(float deltaTime, float totalTime)
 
 		ps->SetFloat3("ambient", ambientColor);
 		ps->SetData("lights", &lights[0], sizeof(Light) * (int)lights.size());
+
 		e->Draw(context, mainCamera, totalTime);
 	}
 

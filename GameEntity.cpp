@@ -18,30 +18,7 @@ Mesh* GameEntity::GetMesh() { return mesh; }
 
 void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, std::shared_ptr<Camera> camera, float totalTime)
 {
-	material->GetPixelShader()->SetShader();
-
-	std::shared_ptr<SimpleVertexShader> vs = material->GetVertexShader();
-	vs->SetShader();
-
-	vs->SetMatrix4x4("world", transform.GetWorldMatrix());
-	vs->SetMatrix4x4("worldInvTranspose", transform.GetWorldInverseTransposeMatrix());
-	vs->SetMatrix4x4("view", camera->GetViewMatrix());
-	vs->SetMatrix4x4("projection", camera->GetProjectionMatrix());
-
-	vs->CopyAllBufferData();
-
-	std::shared_ptr<SimplePixelShader> ps = material->GetPixelShader();
-	ps->SetShader();
-	ps->SetFloat3("colorTint", material->GetColorTint());
-	ps->SetFloat("roughness", material->GetRoughness());
-	ps->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());
-	
-	//ps->SetFloat("time", totalTime);
-	//ps->SetFloat2("circle0", XMFLOAT2(sin(totalTime), cos(totalTime)));
-	//ps->SetFloat2("circle1", XMFLOAT2(sin(-totalTime * 5), cos(totalTime * 5)));
-	//ps->SetFloat2("circle2", XMFLOAT2(sin(totalTime * 0.25), cos(-totalTime * 0.25)));
-
-	ps->CopyAllBufferData();
+	material->PrepareMaterial(&transform, camera.get());
 
 	mesh->Draw();
 }

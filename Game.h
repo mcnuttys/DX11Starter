@@ -44,6 +44,9 @@ private:
 	// Shaders and shader-related constructs
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> rockyTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> woodPlanksTexture;
+
 	std::shared_ptr<SimpleVertexShader> vertexShader;
 	std::shared_ptr<SimplePixelShader> pixelShader;
 	std::shared_ptr<SimplePixelShader> fancyPixelShader;
