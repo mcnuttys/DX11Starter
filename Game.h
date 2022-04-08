@@ -6,6 +6,7 @@
 #include "SimpleShader.h"
 #include "Material.h"
 #include "Lights.h"
+#include "Sky.h"
 
 #include <vector>
 #include <DirectXMath.h>
@@ -45,7 +46,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> rockyTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> rockyTextureNormal;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> woodPlanksTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> woodPlanksTextureNormal;
 
 	std::shared_ptr<SimpleVertexShader> vertexShader;
 	std::shared_ptr<SimplePixelShader> pixelShader;
@@ -63,5 +66,31 @@ private:
 	DirectX::XMFLOAT3 ambientColor;
 
 	std::vector<Light> lights;
+
+	std::shared_ptr<Sky> sky;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> skyResourceView;
+
+	// --------------------------------------------------------
+	// Author: Chris Cascioli
+	// Purpose: Creates a cube map on the GPU from 6 individual textures
+	// 
+	// - You are allowed to directly copy/paste this into your code base
+	//   for assignments, given that you clearly cite that this is not
+	//   code of your own design.
+	//
+	// - Note: This code assumes you’re putting the function in Game.cpp, 
+	//   you’ve included WICTextureLoader.h and you have an ID3D11Device 
+	//   ComPtr called “device”.  Make any adjustments necessary for
+	//   your own implementation.
+	// --------------------------------------------------------
+	
+	// Helper for creating a cubemap from 6 individual textures
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateCubemap(
+		const wchar_t* right,
+		const wchar_t* left,
+		const wchar_t* up,
+		const wchar_t* down,
+		const wchar_t* front,
+		const wchar_t* back);
 };
 
