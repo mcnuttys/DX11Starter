@@ -37,6 +37,8 @@ private:
 	void LoadShaders(); 
 	void CreateBasicGeometry();
 
+	void CreateTerrain(XMFLOAT3 pos, XMINT2 size);
+
 	// Note the usage of ComPtr below
 	//  - This is a smart pointer for objects that abide by the
 	//    Component Object Model, which DirectX objects do
@@ -65,6 +67,7 @@ private:
 	std::shared_ptr<Material> mat4;
 	std::shared_ptr<Material> mat5;
 	std::shared_ptr<Material> mat6;
+	std::shared_ptr<Material> terrainMaterial;
 
 	DirectX::XMFLOAT3 ambientColor;
 

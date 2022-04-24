@@ -15,6 +15,8 @@ Mesh::Mesh(
 )
 {
 	CreateBuffers(_vertices, _vertexCount, _indices, _indexCount, _device);
+
+	context = _deviceContext;
 }
 
 Mesh::Mesh(const char* objFile, Microsoft::WRL::ComPtr<ID3D11Device> _device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> _deviceContext)

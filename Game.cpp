@@ -124,14 +124,21 @@ void Game::Init()
 	// geometry to draw and some simple camera matrices.
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
+	
+	mat0 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	mat1 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	mat2 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	mat3 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	mat4 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	mat5 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	mat6 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
 
-	mat0 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.0f, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat1 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.0f, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat2 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.0f, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat3 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.0f, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat4 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.0f, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat5 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.0f, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat6 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.0f, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	terrainMaterial = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.5f, XMFLOAT2(5, 5), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	terrainMaterial->AddSampler("BasicSampler", sampler);
+	terrainMaterial->AddTextureSRV("Albedo", bronzeA);
+	terrainMaterial->AddTextureSRV("NormalMap", bronzeN);
+	terrainMaterial->AddTextureSRV("RoughnessMap", bronzeR);
+	terrainMaterial->AddTextureSRV("MetalnessMap", bronzeM);
 
 	mat0->AddSampler("BasicSampler", sampler);
 	mat0->AddTextureSRV("Albedo", cobbleA);
@@ -183,7 +190,7 @@ void Game::Init()
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mainCamera = std::make_shared<Camera>((float)width / height, DirectX::XMFLOAT3(0.0f, 0.0f, -10.0f));
-	ambientColor = XMFLOAT3(0,0,0);
+	ambientColor = XMFLOAT3(0, 0, 0);
 
 	std::shared_ptr<SimpleVertexShader> skyVS = std::make_shared<SimpleVertexShader>(device, context, GetFullPathTo_Wide(L"SkyVS.cso").c_str());
 	std::shared_ptr<SimplePixelShader> skyPS = std::make_shared<SimplePixelShader>(device, context, GetFullPathTo_Wide(L"SkyPS.cso").c_str());
@@ -254,7 +261,7 @@ void Game::CreateBasicGeometry()
 	GameEntity* entity4 = new GameEntity(meshes[5], mat4);
 	GameEntity* entity5 = new GameEntity(meshes[5], mat5);
 	GameEntity* entity6 = new GameEntity(meshes[5], mat6);
-
+	
 	entities.push_back(entity0);
 	entities.push_back(entity1);
 	entities.push_back(entity2);
@@ -271,40 +278,93 @@ void Game::CreateBasicGeometry()
 	Light dirLight0 = {};
 	dirLight0.Color = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	dirLight0.Type = LIGHT_TYPE_DIRECTIONAL;
-	dirLight0.Intensity = 1.0f;
-	dirLight0.Direction = XMFLOAT3(0, -1, 0);
+	dirLight0.Intensity = 0.5f;
+	dirLight0.Direction = XMFLOAT3(1, -1, 0);
 
 	Light dirLight1 = {};
 	dirLight1.Color = XMFLOAT3(1, 1, 1);
 	dirLight1.Type = LIGHT_TYPE_DIRECTIONAL;
 	dirLight1.Intensity = 0.5f;
-	dirLight1.Direction = XMFLOAT3(0, 1, 0);
+	dirLight1.Direction = XMFLOAT3(-1, -1, 0);
 	
-	Light dirLight2 = {};
-	dirLight2.Color = XMFLOAT3(1, 1, 1);
-	dirLight2.Type = LIGHT_TYPE_DIRECTIONAL;
-	dirLight2.Intensity = 0.5f;
-	dirLight2.Direction = XMFLOAT3(0, 0, 1);
+	//Light dirLight2 = {};
+	//dirLight2.Color = XMFLOAT3(1, 1, 1);
+	//dirLight2.Type = LIGHT_TYPE_DIRECTIONAL;
+	//dirLight2.Intensity = 0.5f;
+	//dirLight2.Direction = XMFLOAT3(0, 0, 1);
 
-	Light pointLight0 = {};
-	pointLight0.Color = XMFLOAT3(1, 0, 0);
-	pointLight0.Type = LIGHT_TYPE_POINT;
-	pointLight0.Intensity = 1.0f;
-	pointLight0.Position = XMFLOAT3(-4, 1, 0);
-	pointLight0.Range = 5;
-
-	Light pointLight1 = {};
-	pointLight1.Color = XMFLOAT3(1, 1, 0);
-	pointLight1.Type = LIGHT_TYPE_POINT;
-	pointLight1.Intensity = 1.0f;
-	pointLight1.Position = XMFLOAT3(1.5f, 1, 0);
-	pointLight1.Range = 2;
+	//Light pointLight0 = {};
+	//pointLight0.Color = XMFLOAT3(1, 0, 0);
+	//pointLight0.Type = LIGHT_TYPE_POINT;
+	//pointLight0.Intensity = 1.0f;
+	//pointLight0.Position = XMFLOAT3(-4, 1, 0);
+	//pointLight0.Range = 5;
+	//
+	//Light pointLight1 = {};
+	//pointLight1.Color = XMFLOAT3(1, 1, 0);
+	//pointLight1.Type = LIGHT_TYPE_POINT;
+	//pointLight1.Intensity = 1.0f;
+	//pointLight1.Position = XMFLOAT3(1.5f, 1, 0);
+	//pointLight1.Range = 2;
 
 	lights.push_back(dirLight0);
 	lights.push_back(dirLight1);
-	lights.push_back(dirLight2);
-	lights.push_back(pointLight0);
-	lights.push_back(pointLight1);
+	//lights.push_back(dirLight2);
+	//lights.push_back(pointLight0);
+	//lights.push_back(pointLight1);
+
+	//CreateTerrain(XMFLOAT3(0, 0, 0), XMINT2(50, 50));
+}
+
+void Game::CreateTerrain(XMFLOAT3 pos, XMINT2 size)
+{
+	// Setup the basic objects (I think)
+	std::vector<Vertex> vertices;
+	std::vector<UINT> indices;
+
+	//Vertex v;
+	//v.Position = XMFLOAT3(0, 0, 0);
+	//vertices.push_back(v);
+
+	for (int i = 0; i < size.x; i++) {
+		for (int j = 0; j < size.y; j++) {
+			float x = i;
+			x -= (float)(size.x - 1) / 2;
+
+			float z = j;
+			z -= (float)(size.y - 1) / 2;
+
+			float y = sin(x) + sin(z);
+
+			Vertex v;
+			v.Position = XMFLOAT3(x, y, z);
+			v.UV = XMFLOAT2((float)i / size.x, (float)j / size.y);
+			v.Tangent = XMFLOAT3(1, 0, 0);
+			v.Normal = XMFLOAT3(0, 1, 0);
+
+			vertices.push_back(v);
+
+			if (i > 0 && j > 0) {
+				// We can add indices
+				int vCount = vertices.size() - 1;
+
+				indices.push_back(vCount);
+				indices.push_back(vCount - 1 - size.x);
+				indices.push_back(vCount - size.x);
+
+				indices.push_back(vCount);
+				indices.push_back(vCount - 1);
+				indices.push_back(vCount - 1 - size.x);
+			}
+		}
+	}
+
+	Mesh* terrainMesh = new Mesh(vertices.data(), vertices.size(), indices.data(), indices.size(), device, context);
+	meshes.push_back(terrainMesh);
+
+	GameEntity* terrain = new GameEntity(terrainMesh, terrainMaterial);
+	terrain->GetTransform()->SetPosition(pos.x, pos.y, pos.z);
+	entities.push_back(terrain);
 }
 
 // --------------------------------------------------------

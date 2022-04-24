@@ -109,8 +109,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ShaderIncludes.hlsli" />
-    <None Include="packages.config" />
     <None Include="Lighting.hlsli" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
