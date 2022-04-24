@@ -1,6 +1,8 @@
 #ifndef __GGP_LIGHTING__
 #define __GGP_LIGHTING__
 
+#define MAX_SPECULAR_EXPONENT 256.0f
+
 #define LIGHT_TYPE_DIRECTIONAL 0
 #define LIGHT_TYPE_POINT 1
 #define LIGHT_TYPE_SPOT 2
@@ -15,8 +17,6 @@ struct Light {
 	float SpotFalloff;
 	float3 Padding;
 };
-
-#define MAX_SPECULAR_EXPONENT 256.0f
 
 float Diffuse(float3 normal, float3 dirToLight) {
 	return saturate(dot(normal, dirToLight));

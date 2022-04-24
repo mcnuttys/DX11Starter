@@ -3,9 +3,10 @@
 #include "Input.h"
 #include "GameEntity.h"
 
+#include "WICTextureLoader.h"
+
 #include <math.h>
 #include <iostream>
-#include "WICTextureLoader.h"
 
 // Needed for a helper function to read compiled shader files from the hard drive
 #pragma comment(lib, "d3dcompiler.lib")
@@ -125,13 +126,13 @@ void Game::Init()
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
 	
-	mat0 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat1 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat2 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat3 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat4 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat5 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
-	mat6 = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	mat0 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	mat1 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	mat2 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	mat3 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	mat4 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	mat5 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	mat6 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
 
 	terrainMaterial = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.5f, XMFLOAT2(5, 5), XMFLOAT2(0, 0), vertexShader, pixelShader);
 	terrainMaterial->AddSampler("BasicSampler", sampler);
@@ -278,14 +279,14 @@ void Game::CreateBasicGeometry()
 	Light dirLight0 = {};
 	dirLight0.Color = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	dirLight0.Type = LIGHT_TYPE_DIRECTIONAL;
-	dirLight0.Intensity = 0.5f;
+	dirLight0.Intensity = 5.0f;
 	dirLight0.Direction = XMFLOAT3(1, -1, 0);
-
-	Light dirLight1 = {};
-	dirLight1.Color = XMFLOAT3(1, 1, 1);
-	dirLight1.Type = LIGHT_TYPE_DIRECTIONAL;
-	dirLight1.Intensity = 0.5f;
-	dirLight1.Direction = XMFLOAT3(-1, -1, 0);
+	//
+	//Light dirLight1 = {};
+	//dirLight1.Color = XMFLOAT3(1, 1, 1);
+	//dirLight1.Type = LIGHT_TYPE_DIRECTIONAL;
+	//dirLight1.Intensity = 0.5f;
+	//dirLight1.Direction = XMFLOAT3(-1, -1, 0);
 	
 	//Light dirLight2 = {};
 	//dirLight2.Color = XMFLOAT3(1, 1, 1);
@@ -293,25 +294,25 @@ void Game::CreateBasicGeometry()
 	//dirLight2.Intensity = 0.5f;
 	//dirLight2.Direction = XMFLOAT3(0, 0, 1);
 
-	//Light pointLight0 = {};
-	//pointLight0.Color = XMFLOAT3(1, 0, 0);
-	//pointLight0.Type = LIGHT_TYPE_POINT;
-	//pointLight0.Intensity = 1.0f;
-	//pointLight0.Position = XMFLOAT3(-4, 1, 0);
-	//pointLight0.Range = 5;
-	//
-	//Light pointLight1 = {};
-	//pointLight1.Color = XMFLOAT3(1, 1, 0);
-	//pointLight1.Type = LIGHT_TYPE_POINT;
-	//pointLight1.Intensity = 1.0f;
-	//pointLight1.Position = XMFLOAT3(1.5f, 1, 0);
-	//pointLight1.Range = 2;
+	Light pointLight0 = {};
+	pointLight0.Color = XMFLOAT3(1, 0, 0);
+	pointLight0.Type = LIGHT_TYPE_POINT;
+	pointLight0.Intensity = 1.0f;
+	pointLight0.Position = XMFLOAT3(-4, 1, 0);
+	pointLight0.Range = 5;
+	
+	Light pointLight1 = {};
+	pointLight1.Color = XMFLOAT3(1, 1, 0);
+	pointLight1.Type = LIGHT_TYPE_POINT;
+	pointLight1.Intensity = 1.0f;
+	pointLight1.Position = XMFLOAT3(1.5f, 1, 0);
+	pointLight1.Range = 2;
 
 	lights.push_back(dirLight0);
-	lights.push_back(dirLight1);
+	//lights.push_back(dirLight1);
 	//lights.push_back(dirLight2);
-	//lights.push_back(pointLight0);
-	//lights.push_back(pointLight1);
+	lights.push_back(pointLight0);
+	lights.push_back(pointLight1);
 
 	//CreateTerrain(XMFLOAT3(0, 0, 0), XMINT2(50, 50));
 }
