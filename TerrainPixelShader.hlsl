@@ -28,12 +28,15 @@ float4 main(VertexToPixel input) : SV_TARGET
     
     input.uv = input.uv * UVScale + UVOffset;
     
-    float3 grassColor = GrassTexture.Sample(BasicSampler, input.uv).rgb;
-    grassColor.rgb = pow(grassColor.rgb, 2.2f);
+    //float3 grassColor = GrassTexture.Sample(BasicSampler, input.uv).rgb;
+    //grassColor.rgb = pow(grassColor.rgb, 2.2f);
+    //
+    //float3 cliffColor = CliffTexture.Sample(BasicSampler, input.uv).rgb;
+    //cliffColor.rgb = pow(cliffColor.rgb, 2.2f);
     
-    float3 cliffColor = CliffTexture.Sample(BasicSampler, input.uv).rgb;
-    cliffColor.rgb = pow(cliffColor.rgb, 2.2f);
-
+    float3 grassColor = float3(0.0f, 0.5f, 0.0f);
+    float3 cliffColor = float3(0.5f, 0.5f, 0.5f);
+    
     float steepness = dot(input.normal, float3(0, 1.0f, 0));
     float3 surfaceColor = lerp(cliffColor, grassColor, steepness);
         
