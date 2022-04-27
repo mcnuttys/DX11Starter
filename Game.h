@@ -38,6 +38,7 @@ private:
 	void LoadShaders(); 
 	void CreateBasicGeometry();
 
+	void CreateTerrain(XMFLOAT3 pos, XMINT2 size);
 	void CreateTerrain(XMFLOAT3 pos, XMINT3 size);
 
 	// Note the usage of ComPtr below

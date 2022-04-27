@@ -67,12 +67,12 @@ void Game::Init()
 	// Load Textures
 	// Declare the textures we'll need
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> cobbleA, cobbleN, cobbleR, cobbleM;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> floorA, floorN, floorR, floorM;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> paintA, paintN, paintR, paintM;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> scratchedA, scratchedN, scratchedR, scratchedM;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> bronzeA, bronzeN, bronzeR, bronzeM;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> roughA, roughN, roughR, roughM;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> woodA, woodN, woodR, woodM;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> floorA, floorN, floorR, floorM;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> paintA, paintN, paintR, paintM;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> scratchedA, scratchedN, scratchedR, scratchedM;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> bronzeA, bronzeN, bronzeR, bronzeM;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> roughA, roughN, roughR, roughM;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> woodA, woodN, woodR, woodM;
 
 	// Quick pre-processor macro for simplifying texture loading calls below
 	#define LoadTexture(path, srv) CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(path).c_str(), 0, srv.GetAddressOf());
@@ -81,36 +81,36 @@ void Game::Init()
 	LoadTexture(L"../../Assets/Textures/PBR/cobblestone_normals.png", cobbleN);
 	LoadTexture(L"../../Assets/Textures/PBR/cobblestone_roughness.png", cobbleR);
 	LoadTexture(L"../../Assets/Textures/PBR/cobblestone_metal.png", cobbleM);
-
-	LoadTexture(L"../../Assets/Textures/PBR/floor_albedo.png", floorA);
-	LoadTexture(L"../../Assets/Textures/PBR/floor_normals.png", floorN);
-	LoadTexture(L"../../Assets/Textures/PBR/floor_roughness.png", floorR);
-	LoadTexture(L"../../Assets/Textures/PBR/floor_metal.png", floorM);
-
-	LoadTexture(L"../../Assets/Textures/PBR/paint_albedo.png", paintA);
-	LoadTexture(L"../../Assets/Textures/PBR/paint_normals.png", paintN);
-	LoadTexture(L"../../Assets/Textures/PBR/paint_roughness.png", paintR);
-	LoadTexture(L"../../Assets/Textures/PBR/paint_metal.png", paintM);
-
-	LoadTexture(L"../../Assets/Textures/PBR/scratched_albedo.png", scratchedA);
-	LoadTexture(L"../../Assets/Textures/PBR/scratched_normals.png", scratchedN);
-	LoadTexture(L"../../Assets/Textures/PBR/scratched_roughness.png", scratchedR);
-	LoadTexture(L"../../Assets/Textures/PBR/scratched_metal.png", scratchedM);
-
-	LoadTexture(L"../../Assets/Textures/PBR/bronze_albedo.png", bronzeA);
-	LoadTexture(L"../../Assets/Textures/PBR/bronze_normals.png", bronzeN);
-	LoadTexture(L"../../Assets/Textures/PBR/bronze_roughness.png", bronzeR);
-	LoadTexture(L"../../Assets/Textures/PBR/bronze_metal.png", bronzeM);
-
-	LoadTexture(L"../../Assets/Textures/PBR/rough_albedo.png", roughA);
-	LoadTexture(L"../../Assets/Textures/PBR/rough_normals.png", roughN);
-	LoadTexture(L"../../Assets/Textures/PBR/rough_roughness.png", roughR);
-	LoadTexture(L"../../Assets/Textures/PBR/rough_metal.png", roughM);
-
-	LoadTexture(L"../../Assets/Textures/PBR/wood_albedo.png", woodA);
-	LoadTexture(L"../../Assets/Textures/PBR/wood_normals.png", woodN);
-	LoadTexture(L"../../Assets/Textures/PBR/wood_roughness.png", woodR);
-	LoadTexture(L"../../Assets/Textures/PBR/wood_metal.png", woodM);
+	//
+	//LoadTexture(L"../../Assets/Textures/PBR/floor_albedo.png", floorA);
+	//LoadTexture(L"../../Assets/Textures/PBR/floor_normals.png", floorN);
+	//LoadTexture(L"../../Assets/Textures/PBR/floor_roughness.png", floorR);
+	//LoadTexture(L"../../Assets/Textures/PBR/floor_metal.png", floorM);
+	//
+	//LoadTexture(L"../../Assets/Textures/PBR/paint_albedo.png", paintA);
+	//LoadTexture(L"../../Assets/Textures/PBR/paint_normals.png", paintN);
+	//LoadTexture(L"../../Assets/Textures/PBR/paint_roughness.png", paintR);
+	//LoadTexture(L"../../Assets/Textures/PBR/paint_metal.png", paintM);
+	//
+	//LoadTexture(L"../../Assets/Textures/PBR/scratched_albedo.png", scratchedA);
+	//LoadTexture(L"../../Assets/Textures/PBR/scratched_normals.png", scratchedN);
+	//LoadTexture(L"../../Assets/Textures/PBR/scratched_roughness.png", scratchedR);
+	//LoadTexture(L"../../Assets/Textures/PBR/scratched_metal.png", scratchedM);
+	//
+	//LoadTexture(L"../../Assets/Textures/PBR/bronze_albedo.png", bronzeA);
+	//LoadTexture(L"../../Assets/Textures/PBR/bronze_normals.png", bronzeN);
+	//LoadTexture(L"../../Assets/Textures/PBR/bronze_roughness.png", bronzeR);
+	//LoadTexture(L"../../Assets/Textures/PBR/bronze_metal.png", bronzeM);
+	//
+	//LoadTexture(L"../../Assets/Textures/PBR/rough_albedo.png", roughA);
+	//LoadTexture(L"../../Assets/Textures/PBR/rough_normals.png", roughN);
+	//LoadTexture(L"../../Assets/Textures/PBR/rough_roughness.png", roughR);
+	//LoadTexture(L"../../Assets/Textures/PBR/rough_metal.png", roughM);
+	//
+	//LoadTexture(L"../../Assets/Textures/PBR/wood_albedo.png", woodA);
+	//LoadTexture(L"../../Assets/Textures/PBR/wood_normals.png", woodN);
+	//LoadTexture(L"../../Assets/Textures/PBR/wood_roughness.png", woodR);
+	//LoadTexture(L"../../Assets/Textures/PBR/wood_metal.png", woodM);
 
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
 	D3D11_SAMPLER_DESC sampDescription = {};
@@ -127,62 +127,62 @@ void Game::Init()
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
 	
-	mat0 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
-	mat1 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
-	mat2 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
-	mat3 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
-	mat4 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
-	mat5 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
-	mat6 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	//mat0 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(10.0f, 10.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	//mat1 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	//mat2 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	//mat3 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	//mat4 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	//mat5 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
+	//mat6 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
 
-	terrainMaterial = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.5f, XMFLOAT2(5, 5), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	terrainMaterial = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.5f, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
 	terrainMaterial->AddSampler("BasicSampler", sampler);
-	terrainMaterial->AddTextureSRV("Albedo", bronzeA);
-	terrainMaterial->AddTextureSRV("NormalMap", bronzeN);
-	terrainMaterial->AddTextureSRV("RoughnessMap", bronzeR);
-	terrainMaterial->AddTextureSRV("MetalnessMap", bronzeM);
+	terrainMaterial->AddTextureSRV("Albedo", cobbleA);
+	terrainMaterial->AddTextureSRV("NormalMap", cobbleN);
+	terrainMaterial->AddTextureSRV("RoughnessMap", cobbleR);
+	terrainMaterial->AddTextureSRV("MetalnessMap", cobbleM);
 
-	mat0->AddSampler("BasicSampler", sampler);
-	mat0->AddTextureSRV("Albedo", cobbleA);
-	mat0->AddTextureSRV("NormalMap", cobbleN);
-	mat0->AddTextureSRV("RoughnessMap", cobbleR);
-	mat0->AddTextureSRV("MetalnessMap", cobbleM);
-
-	mat1->AddSampler("BasicSampler", sampler);
-	mat1->AddTextureSRV("Albedo", floorA);
-	mat1->AddTextureSRV("NormalMap", floorN);
-	mat1->AddTextureSRV("RoughnessMap", floorR);
-	mat1->AddTextureSRV("MetalnessMap", floorM);
-
-	mat2->AddSampler("BasicSampler", sampler);
-	mat2->AddTextureSRV("Albedo", paintA);
-	mat2->AddTextureSRV("NormalMap", paintN);
-	mat2->AddTextureSRV("RoughnessMap", paintR);
-	mat2->AddTextureSRV("MetalnessMap", paintM);
-
-	mat3->AddSampler("BasicSampler", sampler);
-	mat3->AddTextureSRV("Albedo", scratchedA);
-	mat3->AddTextureSRV("NormalMap", scratchedN);
-	mat3->AddTextureSRV("RoughnessMap", scratchedR);
-	mat3->AddTextureSRV("MetalnessMap", scratchedM);
-
-	mat4->AddSampler("BasicSampler", sampler);
-	mat4->AddTextureSRV("Albedo", bronzeA);
-	mat4->AddTextureSRV("NormalMap", bronzeN);
-	mat4->AddTextureSRV("RoughnessMap", bronzeR);
-	mat4->AddTextureSRV("MetalnessMap", bronzeM);
-
-	mat5->AddSampler("BasicSampler", sampler);
-	mat5->AddTextureSRV("Albedo", roughA);
-	mat5->AddTextureSRV("NormalMap", roughN);
-	mat5->AddTextureSRV("RoughnessMap", roughR);
-	mat5->AddTextureSRV("MetalnessMap", roughM);
-
-	mat6->AddSampler("BasicSampler", sampler);
-	mat6->AddTextureSRV("Albedo", woodA);
-	mat6->AddTextureSRV("NormalMap", woodN);
-	mat6->AddTextureSRV("RoughnessMap", woodR);
-	mat6->AddTextureSRV("MetalnessMap", woodM);
+	//mat0->AddSampler("BasicSampler", sampler);
+	//mat0->AddTextureSRV("Albedo", cobbleA);
+	//mat0->AddTextureSRV("NormalMap", cobbleN);
+	//mat0->AddTextureSRV("RoughnessMap", cobbleR);
+	//mat0->AddTextureSRV("MetalnessMap", cobbleM);
+	//
+	//mat1->AddSampler("BasicSampler", sampler);
+	//mat1->AddTextureSRV("Albedo", floorA);
+	//mat1->AddTextureSRV("NormalMap", floorN);
+	//mat1->AddTextureSRV("RoughnessMap", floorR);
+	//mat1->AddTextureSRV("MetalnessMap", floorM);
+	//
+	//mat2->AddSampler("BasicSampler", sampler);
+	//mat2->AddTextureSRV("Albedo", paintA);
+	//mat2->AddTextureSRV("NormalMap", paintN);
+	//mat2->AddTextureSRV("RoughnessMap", paintR);
+	//mat2->AddTextureSRV("MetalnessMap", paintM);
+	//
+	//mat3->AddSampler("BasicSampler", sampler);
+	//mat3->AddTextureSRV("Albedo", scratchedA);
+	//mat3->AddTextureSRV("NormalMap", scratchedN);
+	//mat3->AddTextureSRV("RoughnessMap", scratchedR);
+	//mat3->AddTextureSRV("MetalnessMap", scratchedM);
+	//
+	//mat4->AddSampler("BasicSampler", sampler);
+	//mat4->AddTextureSRV("Albedo", bronzeA);
+	//mat4->AddTextureSRV("NormalMap", bronzeN);
+	//mat4->AddTextureSRV("RoughnessMap", bronzeR);
+	//mat4->AddTextureSRV("MetalnessMap", bronzeM);
+	//
+	//mat5->AddSampler("BasicSampler", sampler);
+	//mat5->AddTextureSRV("Albedo", roughA);
+	//mat5->AddTextureSRV("NormalMap", roughN);
+	//mat5->AddTextureSRV("RoughnessMap", roughR);
+	//mat5->AddTextureSRV("MetalnessMap", roughM);
+	//
+	//mat6->AddSampler("BasicSampler", sampler);
+	//mat6->AddTextureSRV("Albedo", woodA);
+	//mat6->AddTextureSRV("NormalMap", woodN);
+	//mat6->AddTextureSRV("RoughnessMap", woodR);
+	//mat6->AddTextureSRV("MetalnessMap", woodM);
 
 	CreateBasicGeometry();
 
@@ -190,6 +190,8 @@ void Game::Init()
 	// geometric primitives (points, lines or triangles) we want to draw.  
 	// Essentially: "What kind of shape should the GPU draw with our data?"
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	//context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	mainCamera = std::make_shared<Camera>((float)width / height, DirectX::XMFLOAT3(0.0f, 0.0f, -10.0f));
 	ambientColor = XMFLOAT3(0, 0, 0);
@@ -256,26 +258,26 @@ void Game::CreateBasicGeometry()
 	meshes.push_back(new Mesh(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context));
 	meshes.push_back(new Mesh(GetFullPathTo("../../Assets/Models/torus.obj").c_str(), device, context));
 
-	GameEntity* entity0 = new GameEntity(meshes[5], mat0);
-	GameEntity* entity1 = new GameEntity(meshes[5], mat1);
-	GameEntity* entity2 = new GameEntity(meshes[5], mat2);
-	GameEntity* entity3 = new GameEntity(meshes[5], mat3);
-	GameEntity* entity4 = new GameEntity(meshes[5], mat4);
-	GameEntity* entity5 = new GameEntity(meshes[5], mat5);
-	GameEntity* entity6 = new GameEntity(meshes[5], mat6);
-	
-	entities.push_back(entity0);
-	entities.push_back(entity1);
-	entities.push_back(entity2);
-	entities.push_back(entity3);
-	entities.push_back(entity4);
-	entities.push_back(entity5);
-	entities.push_back(entity6);
-
-	for (int i = -4; i < 3; i++) {
-		int j = i + 4;
-		entities[j]->GetTransform()->SetPosition(i * 3, 0, 0);
-	}
+	//GameEntity* entity0 = new GameEntity(meshes[5], mat0);
+	//GameEntity* entity1 = new GameEntity(meshes[5], mat1);
+	//GameEntity* entity2 = new GameEntity(meshes[5], mat2);
+	//GameEntity* entity3 = new GameEntity(meshes[5], mat3);
+	//GameEntity* entity4 = new GameEntity(meshes[5], mat4);
+	//GameEntity* entity5 = new GameEntity(meshes[5], mat5);
+	//GameEntity* entity6 = new GameEntity(meshes[5], mat6);
+	//
+	//entities.push_back(entity0);
+	//entities.push_back(entity1);
+	//entities.push_back(entity2);
+	//entities.push_back(entity3);
+	//entities.push_back(entity4);
+	//entities.push_back(entity5);
+	//entities.push_back(entity6);
+	//
+	//for (int i = -4; i < 3; i++) {
+	//	int j = i + 4;
+	//	entities[j]->GetTransform()->SetPosition(i * 3, 0, 0);
+	//}
 
 	Light dirLight0 = {};
 	dirLight0.Color = XMFLOAT3(1.0f, 1.0f, 1.0f);
@@ -315,7 +317,23 @@ void Game::CreateBasicGeometry()
 	lights.push_back(pointLight0);
 	lights.push_back(pointLight1);
 
-	CreateTerrain(XMFLOAT3(0, -10, 0), XMINT3(50, 0, 50));
+	XMINT3 chunkSize = XMINT3(16, 16, 16);
+
+	int renderDistance = 2;
+	for (int x = -renderDistance; x < renderDistance + 1; x++) {
+		for (int z = -renderDistance; z < renderDistance + 1; z++) {
+			for (int y = -renderDistance; y < renderDistance + 1; y++) {
+				CreateTerrain(
+					XMFLOAT3(x * chunkSize.x, y * chunkSize.y, z * chunkSize.z),
+					chunkSize);
+			}
+		}
+	}
+}
+
+void Game::CreateTerrain(XMFLOAT3 pos, XMINT2 size)
+{
+	chunks.push_back(new Chunk(pos, size, device, context, terrainMaterial));
 }
 
 void Game::CreateTerrain(XMFLOAT3 pos, XMINT3 size)
@@ -487,6 +505,8 @@ void Game::Draw(float deltaTime, float totalTime)
 	}
 
 	for (auto& c : chunks) {
+		if (c->emptyChunk) continue;
+
 		GameEntity* chunkEntity = c->GetGameEntity();
 		std::shared_ptr<SimplePixelShader> ps = chunkEntity->GetMaterial()->GetPixelShader();
 
