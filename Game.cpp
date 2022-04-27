@@ -30,7 +30,7 @@ Game::Game(HINSTANCE hInstance)
 		1280,			   // Width of the window's client area
 		720,			   // Height of the window's client area
 		true),			   // Show extra stats (fps) in title bar?
-	vsync(false)
+	vsync(true)
 {
 #if defined(DEBUG) || defined(_DEBUG)
 	// Do we want a console window?  Probably only in debug mode
@@ -54,6 +54,7 @@ Game::~Game()
 	//   to call Release() on each DirectX object created in Game
 	for (auto& m : meshes) { delete m; }
 	for (auto& e : entities) { delete e; }
+	for (auto& c : chunks) { delete c; }
 }
 
 // --------------------------------------------------------
@@ -279,7 +280,7 @@ void Game::CreateBasicGeometry()
 	Light dirLight0 = {};
 	dirLight0.Color = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	dirLight0.Type = LIGHT_TYPE_DIRECTIONAL;
-	dirLight0.Intensity = 5.0f;
+	dirLight0.Intensity = 1.0f;
 	dirLight0.Direction = XMFLOAT3(1, -1, 0);
 	//
 	//Light dirLight1 = {};
@@ -314,58 +315,12 @@ void Game::CreateBasicGeometry()
 	lights.push_back(pointLight0);
 	lights.push_back(pointLight1);
 
-	//CreateTerrain(XMFLOAT3(0, 0, 0), XMINT2(50, 50));
+	CreateTerrain(XMFLOAT3(0, -10, 0), XMINT3(50, 0, 50));
 }
 
-void Game::CreateTerrain(XMFLOAT3 pos, XMINT2 size)
+void Game::CreateTerrain(XMFLOAT3 pos, XMINT3 size)
 {
-	// Setup the basic objects (I think)
-	std::vector<Vertex> vertices;
-	std::vector<UINT> indices;
-
-	//Vertex v;
-	//v.Position = XMFLOAT3(0, 0, 0);
-	//vertices.push_back(v);
-
-	for (int i = 0; i < size.x; i++) {
-		for (int j = 0; j < size.y; j++) {
-			float x = i;
-			x -= (float)(size.x - 1) / 2;
-
-			float z = j;
-			z -= (float)(size.y - 1) / 2;
-
-			float y = sin(x) + sin(z);
-
-			Vertex v;
-			v.Position = XMFLOAT3(x, y, z);
-			v.UV = XMFLOAT2((float)i / size.x, (float)j / size.y);
-			v.Tangent = XMFLOAT3(1, 0, 0);
-			v.Normal = XMFLOAT3(0, 1, 0);
-
-			vertices.push_back(v);
-
-			if (i > 0 && j > 0) {
-				// We can add indices
-				int vCount = vertices.size() - 1;
-
-				indices.push_back(vCount);
-				indices.push_back(vCount - 1 - size.x);
-				indices.push_back(vCount - size.x);
-
-				indices.push_back(vCount);
-				indices.push_back(vCount - 1);
-				indices.push_back(vCount - 1 - size.x);
-			}
-		}
-	}
-
-	Mesh* terrainMesh = new Mesh(vertices.data(), vertices.size(), indices.data(), indices.size(), device, context);
-	meshes.push_back(terrainMesh);
-
-	GameEntity* terrain = new GameEntity(terrainMesh, terrainMaterial);
-	terrain->GetTransform()->SetPosition(pos.x, pos.y, pos.z);
-	entities.push_back(terrain);
+	chunks.push_back(new Chunk(pos, size, device, context, terrainMaterial));
 }
 
 // --------------------------------------------------------
@@ -529,6 +484,16 @@ void Game::Draw(float deltaTime, float totalTime)
 		ps->SetData("lights", &lights[0], sizeof(Light) * (int)lights.size());
 
 		e->Draw(context, mainCamera, totalTime);
+	}
+
+	for (auto& c : chunks) {
+		GameEntity* chunkEntity = c->GetGameEntity();
+		std::shared_ptr<SimplePixelShader> ps = chunkEntity->GetMaterial()->GetPixelShader();
+
+		ps->SetFloat3("ambient", ambientColor);
+		ps->SetData("lights", &lights[0], sizeof(Light) * (int)lights.size());
+
+		chunkEntity->Draw(context, mainCamera, totalTime);
 	}
 
 	sky->Draw(mainCamera.get());

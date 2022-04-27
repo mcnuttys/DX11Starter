@@ -7,6 +7,7 @@
 #include "Material.h"
 #include "Lights.h"
 #include "Sky.h"
+#include "Chunk.h"
 
 #include <vector>
 #include <DirectXMath.h>
@@ -37,7 +38,7 @@ private:
 	void LoadShaders(); 
 	void CreateBasicGeometry();
 
-	void CreateTerrain(XMFLOAT3 pos, XMINT2 size);
+	void CreateTerrain(XMFLOAT3 pos, XMINT3 size);
 
 	// Note the usage of ComPtr below
 	//  - This is a smart pointer for objects that abide by the
@@ -59,6 +60,7 @@ private:
 	std::shared_ptr<Camera> mainCamera;
 	std::vector<Mesh*> meshes;
 	std::vector<GameEntity*> entities;
+	std::vector<Chunk*> chunks;
 
 	std::shared_ptr<Material> mat0;
 	std::shared_ptr<Material> mat1;

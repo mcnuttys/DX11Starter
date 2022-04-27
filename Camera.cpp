@@ -11,12 +11,11 @@ Camera::Camera(float aspectRatio, XMFLOAT3 startPosition)
     nearPlane = 0.1f;
     farPlane = 1000.0f;
     moveSpeed = 3.0f;
-    mouseSpeed = 3.0f;
+    mouseSpeed = 0.25f;
 
     UpdateViewMatrix();
     UpdateProjectionMatrix(aspectRatio);
 }
-
 
 void Camera::Update(float dt)
 {
