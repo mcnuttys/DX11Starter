@@ -56,7 +56,7 @@ private:
 
 	std::shared_ptr<SimpleVertexShader> vertexShader;
 	std::shared_ptr<SimplePixelShader> pixelShader;
-	std::shared_ptr<SimplePixelShader> fancyPixelShader;
+	std::shared_ptr<SimplePixelShader> terrainPixelShader;
 
 	std::shared_ptr<Camera> mainCamera;
 	std::vector<Mesh*> meshes;

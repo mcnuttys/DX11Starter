@@ -66,21 +66,26 @@ void Game::Init()
 	// Yoinked from your Demo
 	// Load Textures
 	// Declare the textures we'll need
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> cobbleA, cobbleN, cobbleR, cobbleM;
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> cobbleA, cobbleN, cobbleR, cobbleM;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> floorA, floorN, floorR, floorM;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> paintA, paintN, paintR, paintM;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> scratchedA, scratchedN, scratchedR, scratchedM;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> bronzeA, bronzeN, bronzeR, bronzeM;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> roughA, roughN, roughR, roughM;
 	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> woodA, woodN, woodR, woodM;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> grass;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> cliff;
 
 	// Quick pre-processor macro for simplifying texture loading calls below
 	#define LoadTexture(path, srv) CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(path).c_str(), 0, srv.GetAddressOf());
+	
+	LoadTexture(L"../../Assets/Textures/wall0.png", cliff);
+	LoadTexture(L"../../Assets/Textures/wall10.png", grass);
 
-	LoadTexture(L"../../Assets/Textures/PBR/cobblestone_albedo.png", cobbleA);
-	LoadTexture(L"../../Assets/Textures/PBR/cobblestone_normals.png", cobbleN);
-	LoadTexture(L"../../Assets/Textures/PBR/cobblestone_roughness.png", cobbleR);
-	LoadTexture(L"../../Assets/Textures/PBR/cobblestone_metal.png", cobbleM);
+	//LoadTexture(L"../../Assets/Textures/PBR/cobblestone_albedo.png", cobbleA);
+	//LoadTexture(L"../../Assets/Textures/PBR/cobblestone_normals.png", cobbleN);
+	//LoadTexture(L"../../Assets/Textures/PBR/cobblestone_roughness.png", cobbleR);
+	//LoadTexture(L"../../Assets/Textures/PBR/cobblestone_metal.png", cobbleM);
 	//
 	//LoadTexture(L"../../Assets/Textures/PBR/floor_albedo.png", floorA);
 	//LoadTexture(L"../../Assets/Textures/PBR/floor_normals.png", floorN);
@@ -135,12 +140,10 @@ void Game::Init()
 	//mat5 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
 	//mat6 = std::make_shared<Material>(XMFLOAT3(1.0f, 1.0f, 1.0f), 0.0f, XMFLOAT2(1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f), vertexShader, pixelShader);
 
-	terrainMaterial = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 0.5f, XMFLOAT2(1, 1), XMFLOAT2(0, 0), vertexShader, pixelShader);
+	terrainMaterial = std::make_shared<Material>(XMFLOAT3(1, 1, 1), 1.0f, XMFLOAT2(5.0f, 5.0f), XMFLOAT2(0, 0), vertexShader, terrainPixelShader);
 	terrainMaterial->AddSampler("BasicSampler", sampler);
-	terrainMaterial->AddTextureSRV("Albedo", cobbleA);
-	terrainMaterial->AddTextureSRV("NormalMap", cobbleN);
-	terrainMaterial->AddTextureSRV("RoughnessMap", cobbleR);
-	terrainMaterial->AddTextureSRV("MetalnessMap", cobbleM);
+	terrainMaterial->AddTextureSRV("CliffTexture", cliff);
+	terrainMaterial->AddTextureSRV("GrassTexture", grass);
 
 	//mat0->AddSampler("BasicSampler", sampler);
 	//mat0->AddTextureSRV("Albedo", cobbleA);
@@ -194,7 +197,7 @@ void Game::Init()
 	//context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	mainCamera = std::make_shared<Camera>((float)width / height, DirectX::XMFLOAT3(0.0f, 0.0f, -10.0f));
-	ambientColor = XMFLOAT3(0, 0, 0);
+	ambientColor = XMFLOAT3(0.25f, 0.25f, 0.25f);
 
 	std::shared_ptr<SimpleVertexShader> skyVS = std::make_shared<SimpleVertexShader>(device, context, GetFullPathTo_Wide(L"SkyVS.cso").c_str());
 	std::shared_ptr<SimplePixelShader> skyPS = std::make_shared<SimplePixelShader>(device, context, GetFullPathTo_Wide(L"SkyPS.cso").c_str());
@@ -228,7 +231,7 @@ void Game::LoadShaders()
 {
 	vertexShader = std::make_shared<SimpleVertexShader>(device, context, GetFullPathTo_Wide(L"VertexShader.cso").c_str());
 	pixelShader = std::make_shared<SimplePixelShader>(device, context, GetFullPathTo_Wide(L"PixelShader.cso").c_str());
-	fancyPixelShader = std::make_shared<SimplePixelShader>(device, context, GetFullPathTo_Wide(L"FancyShader.cso").c_str());
+	terrainPixelShader = std::make_shared<SimplePixelShader>(device, context, GetFullPathTo_Wide(L"TerrainPixelShader.cso").c_str());
 }
 
 
@@ -319,7 +322,7 @@ void Game::CreateBasicGeometry()
 
 	XMINT3 chunkSize = XMINT3(16, 16, 16);
 
-	int renderDistance = 2;
+	int renderDistance = 5;
 	for (int x = -renderDistance; x < renderDistance + 1; x++) {
 		for (int z = -renderDistance; z < renderDistance + 1; z++) {
 			for (int y = -renderDistance; y < renderDistance + 1; y++) {
