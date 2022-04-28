@@ -62,6 +62,7 @@ private:
 	std::vector<Mesh*> meshes;
 	std::vector<GameEntity*> entities;
 	std::vector<Chunk*> chunks;
+	XMINT3 currentChunk;
 
 	std::shared_ptr<Material> mat0;
 	std::shared_ptr<Material> mat1;

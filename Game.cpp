@@ -7,6 +7,8 @@
 
 #include <math.h>
 #include <iostream>
+#include <string>
+
 
 // Needed for a helper function to read compiled shader files from the hard drive
 #pragma comment(lib, "d3dcompiler.lib")
@@ -322,7 +324,7 @@ void Game::CreateBasicGeometry()
 
 	XMINT3 chunkSize = XMINT3(16, 16, 16);
 
-	int renderDistance = 5;
+	int renderDistance = 4;
 	for (int x = -renderDistance; x < renderDistance + 1; x++) {
 		for (int z = -renderDistance; z < renderDistance + 1; z++) {
 			for (int y = -renderDistance; y < renderDistance + 1; y++) {
@@ -467,6 +469,39 @@ void Game::Update(float deltaTime, float totalTime)
 	{
 		//e->GetTransform()->SetScale(sin(totalTime), cos(totalTime), 1.0f);
 		e->GetTransform()->Rotate(0, deltaTime / 5, 0);
+	}
+
+	XMFLOAT3 position = mainCamera->GetTransform()->GetPosition();
+	XMINT3 cameraChunk = XMINT3((int)(position.x / 16.0f), (int)(position.y / 16.0f), (int)(position.z / 16.0f));
+
+	if (currentChunk.x != cameraChunk.x || currentChunk.y != cameraChunk.y || currentChunk.z != cameraChunk.z)
+	{
+		currentChunk = cameraChunk;
+
+		while (chunks.size() > 0) {
+			delete chunks.at(chunks.size() - 1);
+			chunks.pop_back();
+		}
+
+		XMINT3 chunkSize = XMINT3(16, 16, 16);
+		int renderDistance = 4;
+		for (int x = -renderDistance; x < renderDistance + 1; x++) {
+			for (int z = -renderDistance; z < renderDistance + 1; z++) {
+				for (int y = -renderDistance; y < renderDistance + 1; y++) {
+					float xPos = (currentChunk.x + x) * chunkSize.x;
+					float yPos = (currentChunk.y + y) * chunkSize.y;
+					float zPos = (currentChunk.z + z) * chunkSize.z;
+
+					std::string generationText = "Generating Chunk: " + std::to_string(xPos) + ", " + std::to_string(yPos) + ", " + std::to_string(zPos);
+					printf(generationText.c_str());
+					
+					CreateTerrain(
+						XMFLOAT3(xPos, yPos, zPos),
+						chunkSize
+					);
+				}
+			}
+		}
 	}
 
 	mainCamera->Update(deltaTime);

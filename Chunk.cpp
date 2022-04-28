@@ -655,17 +655,17 @@ void Chunk::GenerateMarchingCubesMesh()
     for (int x = 0; x <= size.x; x++)
     {
         float xPos = position.x + x;
-        xPos -= (float)(size.x - 1) / 2.0f;
+        //xPos -= (float)(size.x - 1) / 2.0f;
 
         for (int z = 0; z <= size.z; z++)
         {
             float zPos = position.z + z;
-            zPos -= (float)(size.z - 1) / 2.0f;
+            //zPos -= (float)(size.z - 1) / 2.0f;
 
             for (int y = 0; y <= size.y; y++)
             {
                 float yPos = position.y + y;
-                yPos -= (float)(size.y - 1) / 2.0f;
+                //yPos -= (float)(size.y - 1) / 2.0f;
 
                 float height = pn.noise(xPos * 0.1f, yPos * 0.25f, zPos * 0.1f) * 10;
                 float weight = yPos - height;
@@ -741,7 +741,7 @@ void Chunk::GenerateMarchingCubesMesh()
         XMStoreFloat3(&vertices.at(v2i).Normal, normalVector);
     }
 
-    if (vertices.size() > 0) {
+    if (vertices.size() > 0 && indices.size() > 0) {
         chunkMesh = new Mesh(vertices.data(), vertices.size(), indices.data(), indices.size(), device, context);
         emptyChunk = false;
     }
