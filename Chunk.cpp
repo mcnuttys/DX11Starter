@@ -650,28 +650,28 @@ void Chunk::GenerateMarchingCubesMesh()
 
     std::vector<Vertex> vertices;
     std::vector<UINT> indices;
-    std::vector<Node> nodes;
+    std::vector<Node*> nodes;
 
     for (int x = 0; x <= size.x; x++)
     {
         float xPos = position.x + x;
-        //xPos -= (float)(size.x - 1) / 2.0f;
+        xPos -= (float)(size.x - 1) / 2.0f;
 
         for (int z = 0; z <= size.z; z++)
         {
             float zPos = position.z + z;
-            //zPos -= (float)(size.z - 1) / 2.0f;
+            zPos -= (float)(size.z - 1) / 2.0f;
 
             for (int y = 0; y <= size.y; y++)
             {
                 float yPos = position.y + y;
-                //yPos -= (float)(size.y - 1) / 2.0f;
+                yPos -= (float)(size.y - 1) / 2.0f;
 
-                float height = pn.noise(xPos * 0.1f, yPos * 0.25f, zPos * 0.1f) * 10;
+                float height = pn.noise(xPos * 0.1f, yPos * 0.25f, zPos * 0.1f) * 25.0f;
                 float weight = yPos - height;
 
                 int nCount = nodes.size();
-                nodes.push_back(Node(XMFLOAT3(xPos, yPos, zPos), weight));
+                nodes.push_back(new Node(XMFLOAT3(xPos, yPos, zPos), weight));
 
                 // Slightly different approach then im used to cause c++ breaks my brain...
                 if (x > 0 && y > 0 && z > 0) {
@@ -679,14 +679,14 @@ void Chunk::GenerateMarchingCubesMesh()
                     // I figured out the actual size thing real quick but...
                     // It took me far longer then I care to admit that the +1
                     // is needed due to the loops actually going <= size
-                    Node n0 = nodes.at(nCount - ((size.y + 1) * (size.z + 1)) - (size.z + 1) - 1);
-                    Node n1 = nodes.at(nCount - ((size.y + 1) * (size.z + 1)) - 1);
-                    Node n2 = nodes.at(nCount - 1);
-                    Node n3 = nodes.at(nCount - (size.z + 1) - 1);
-                    Node n4 = nodes.at(nCount - ((size.y + 1) * (size.z + 1)) - (size.z + 1));
-                    Node n5 = nodes.at(nCount - ((size.y + 1) * (size.z + 1)));
-                    Node n6 = nodes.at(nCount);
-                    Node n7 = nodes.at(nCount - (size.z + 1));
+                    Node* n0 = nodes.at(nCount - ((size.y + 1) * (size.z + 1)) - (size.z + 1) - 1);
+                    Node* n1 = nodes.at(nCount - ((size.y + 1) * (size.z + 1)) - 1);
+                    Node* n2 = nodes.at(nCount - 1);
+                    Node* n3 = nodes.at(nCount - (size.z + 1) - 1);
+                    Node* n4 = nodes.at(nCount - ((size.y + 1) * (size.z + 1)) - (size.z + 1));
+                    Node* n5 = nodes.at(nCount - ((size.y + 1) * (size.z + 1)));
+                    Node* n6 = nodes.at(nCount);
+                    Node* n7 = nodes.at(nCount - (size.z + 1));
 
                     int cubeIndex = CubeIndex(n0, n1, n2, n3, n4, n5, n6, n7);
 
@@ -735,11 +735,13 @@ void Chunk::GenerateMarchingCubesMesh()
         //XMStoreFloat3(&vertices.at(v0i).Normal, XMVector3Normalize(XMLoadFloat3(&vertices.at(v0i).Normal) + normalVector));
         //XMStoreFloat3(&vertices.at(v1i).Normal, XMVector3Normalize(XMLoadFloat3(&vertices.at(v1i).Normal) + normalVector));
         //XMStoreFloat3(&vertices.at(v2i).Normal, XMVector3Normalize(XMLoadFloat3(&vertices.at(v2i).Normal) + normalVector));
-
+    
         XMStoreFloat3(&vertices.at(v0i).Normal, normalVector);
         XMStoreFloat3(&vertices.at(v1i).Normal, normalVector);
         XMStoreFloat3(&vertices.at(v2i).Normal, normalVector);
     }
+
+    for (auto& node : nodes) { delete node; }
 
     if (vertices.size() > 0 && indices.size() > 0) {
         chunkMesh = new Mesh(vertices.data(), vertices.size(), indices.data(), indices.size(), device, context);
@@ -750,21 +752,21 @@ void Chunk::GenerateMarchingCubesMesh()
     }
 }
 
-int Chunk::CubeIndex(Node n0, Node n1, Node n2, Node n3, Node n4, Node n5, Node n6, Node n7)
+int Chunk::CubeIndex(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, Node* n6, Node* n7)
 {
 	int cubeIndex = 0;
-	if (n0.weight > 0) cubeIndex += 1;
-	if (n1.weight > 0) cubeIndex += 2;
-	if (n2.weight > 0) cubeIndex += 4;
-	if (n3.weight > 0) cubeIndex += 8;
-	if (n4.weight > 0) cubeIndex += 16;
-	if (n5.weight > 0) cubeIndex += 32;
-	if (n6.weight > 0) cubeIndex += 64;
-	if (n7.weight > 0) cubeIndex += 128;
+	if (n0->weight > 0) cubeIndex += 1;
+	if (n1->weight > 0) cubeIndex += 2;
+	if (n2->weight > 0) cubeIndex += 4;
+	if (n3->weight > 0) cubeIndex += 8;
+	if (n4->weight > 0) cubeIndex += 16;
+	if (n5->weight > 0) cubeIndex += 32;
+	if (n6->weight > 0) cubeIndex += 64;
+	if (n7->weight > 0) cubeIndex += 128;
 	return cubeIndex;
 }
 
-DirectX::XMFLOAT3 Chunk::GetAntiNode(int index, Node n0, Node n1, Node n2, Node n3, Node n4, Node n5, Node n6, Node n7)
+DirectX::XMFLOAT3 Chunk::GetAntiNode(int index, Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, Node* n6, Node* n7)
 {
     switch (index)
     {
@@ -800,14 +802,14 @@ DirectX::XMFLOAT3 Chunk::GetAntiNode(int index, Node n0, Node n1, Node n2, Node 
 }
 
 
-DirectX::XMFLOAT3 Chunk::Interpolate(Node n0, Node n1)
+DirectX::XMFLOAT3 Chunk::Interpolate(Node* n0, Node* n1)
 {
-    float t = -n0.weight * (1.0f / (n1.weight - n0.weight));
+    float t = -n0->weight * (1.0f / (n1->weight - n0->weight));
 
     if (t < 0.0f) t = 0.0f;
     if (t > 1.0f) t = 1.0f;
 
-    XMVECTOR v = XMVectorLerp(XMLoadFloat3(&n0.position), XMLoadFloat3(&n1.position), t);
+    XMVECTOR v = XMVectorLerp(XMLoadFloat3(&n0->position), XMLoadFloat3(&n1->position), t);
 
     XMFLOAT3 interpolatedVector;
     XMStoreFloat3(&interpolatedVector, v);

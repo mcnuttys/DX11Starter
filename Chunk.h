@@ -30,9 +30,9 @@ private:
 	void GenerateHeightMesh();
 	void GenerateMarchingCubesMesh();
 
-	int CubeIndex(Node n0, Node n1, Node n2, Node n3, Node n4, Node n5, Node n6, Node n7);
-	DirectX::XMFLOAT3 GetAntiNode(int index, Node n0, Node n1, Node n2, Node n3, Node n4, Node n5, Node n6, Node n7);
-	DirectX::XMFLOAT3 Interpolate(Node n0, Node n1);
+	int CubeIndex(Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, Node* n6, Node* n7);
+	DirectX::XMFLOAT3 GetAntiNode(int index, Node* n0, Node* n1, Node* n2, Node* n3, Node* n4, Node* n5, Node* n6, Node* n7);
+	DirectX::XMFLOAT3 Interpolate(Node* n0, Node* n1);
 	int Index3Dto1D(int x, int y, int z);
 
 	DirectX::XMFLOAT2* uvTable;

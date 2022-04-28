@@ -62,7 +62,11 @@ private:
 	std::vector<Mesh*> meshes;
 	std::vector<GameEntity*> entities;
 	std::vector<Chunk*> chunks;
+
 	XMINT3 currentChunk;
+	bool doInfinite;
+	int renderDistance;
+	XMINT3 chunkSize;
 
 	std::shared_ptr<Material> mat0;
 	std::shared_ptr<Material> mat1;

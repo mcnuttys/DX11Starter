@@ -65,6 +65,8 @@ Game::~Game()
 // --------------------------------------------------------
 void Game::Init()
 {
+	std::cout << "Press I to enable/disable infinite mode..." << std::endl;
+
 	// Yoinked from your Demo
 	// Load Textures
 	// Declare the textures we'll need
@@ -322,9 +324,11 @@ void Game::CreateBasicGeometry()
 	lights.push_back(pointLight0);
 	lights.push_back(pointLight1);
 
-	XMINT3 chunkSize = XMINT3(16, 16, 16);
+	
+	doInfinite = false;
+	renderDistance = 4;
+	chunkSize = XMINT3(16, 16, 16);
 
-	int renderDistance = 4;
 	for (int x = -renderDistance; x < renderDistance + 1; x++) {
 		for (int z = -renderDistance; z < renderDistance + 1; z++) {
 			for (int y = -renderDistance; y < renderDistance + 1; y++) {
@@ -338,11 +342,13 @@ void Game::CreateBasicGeometry()
 
 void Game::CreateTerrain(XMFLOAT3 pos, XMINT2 size)
 {
+	pos.y -= 25;
 	chunks.push_back(new Chunk(pos, size, device, context, terrainMaterial));
 }
 
 void Game::CreateTerrain(XMFLOAT3 pos, XMINT3 size)
 {
+	pos.y -= 25;
 	chunks.push_back(new Chunk(pos, size, device, context, terrainMaterial));
 }
 
@@ -462,6 +468,13 @@ void Game::Update(float deltaTime, float totalTime)
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
 
+	Input& input = Input::GetInstance();
+	if (input.KeyPress('I')) {
+		std::string infText = (doInfinite) ? "false" : "true";
+		std::cout << "Infinite World: " << infText << std::endl;
+		doInfinite = !doInfinite;
+	}
+
 	//float offsetX = sin(totalTime) * deltaTime;
 	//float offsetY = cos(totalTime) * deltaTime;
 
@@ -474,7 +487,7 @@ void Game::Update(float deltaTime, float totalTime)
 	XMFLOAT3 position = mainCamera->GetTransform()->GetPosition();
 	XMINT3 cameraChunk = XMINT3((int)(position.x / 16.0f), (int)(position.y / 16.0f), (int)(position.z / 16.0f));
 
-	if (currentChunk.x != cameraChunk.x || currentChunk.y != cameraChunk.y || currentChunk.z != cameraChunk.z)
+	if (doInfinite && (currentChunk.x != cameraChunk.x || currentChunk.y != cameraChunk.y || currentChunk.z != cameraChunk.z))
 	{
 		currentChunk = cameraChunk;
 
@@ -483,8 +496,9 @@ void Game::Update(float deltaTime, float totalTime)
 			chunks.pop_back();
 		}
 
-		XMINT3 chunkSize = XMINT3(16, 16, 16);
-		int renderDistance = 4;
+		renderDistance = 4;
+		chunkSize = XMINT3(16, 16, 16);
+		
 		for (int x = -renderDistance; x < renderDistance + 1; x++) {
 			for (int z = -renderDistance; z < renderDistance + 1; z++) {
 				for (int y = -renderDistance; y < renderDistance + 1; y++) {
@@ -493,8 +507,8 @@ void Game::Update(float deltaTime, float totalTime)
 					float zPos = (currentChunk.z + z) * chunkSize.z;
 
 					std::string generationText = "Generating Chunk: " + std::to_string(xPos) + ", " + std::to_string(yPos) + ", " + std::to_string(zPos);
-					printf(generationText.c_str());
-					
+					std::cout << generationText << std::endl;
+
 					CreateTerrain(
 						XMFLOAT3(xPos, yPos, zPos),
 						chunkSize
